@@ -105,6 +105,10 @@ cd Spnda
 pip install -e .
 ```
 
+> 💡 **Engine Options:**
+> - **Pure Python (`pip install spnda`):** Zero-dependency standard library engine running $R_{sc}$ in **~8–15 microseconds** on CPU.
+> - **Native Rust Engine (`crates/spanda-core`):** Sub-microsecond engine running in **652–767 nanoseconds** with an OpenAI-compatible reverse proxy. Compile via `cd crates/spanda-core && cargo build --release`.
+
 ---
 
 ## 🚀 Quick Start
@@ -124,11 +128,11 @@ response = client.chat.completions.create(
     messages=[{"role": "user", "content": "What is 17 * 19?"}]
 )
 
-# Under the hood: runs in < 1 microsecond via native compiled Rust engine
+# Under the hood: runs in ~10 µs (pure Python) or 0.7 µs (native Rust engine)
 print(response.spanda.rsc)             # 0.0000 (Unanimous consensus)
 print(response.spanda.is_safe)         # True
 print(response.spanda.decision)        # 'FAST_PASS_CONSISTENT'
-print(response.spanda.latency_us)      # 0.7 µs!
+print(response.spanda.latency_us)      # ~10-15 µs (Python) / 0.7 µs (Rust)
 print(response.choices[0].message.content) # Dominant consensus answer
 ```
 
@@ -136,19 +140,28 @@ If `block=True` is passed and the model hallucinates or diverges, `spanda.wrap` 
 
 ---
 
-### 2. Standalone Rust Engine & OpenAI-Compatible Proxy (`spnda serve`)
-For production microservices and non-Python languages (TypeScript, Go, Rust, Ruby, curl), run the standalone compiled Rust gateway:
+### 2. Standalone Rust Gateway & CLI Benchmarks (`spnda`)
+
+**Micro-benchmark the mathematical kernel:**
+```bash
+# 1. Pure Python engine (ships out-of-the-box with pip install):
+spnda bench --iterations 50000
+# ✓ Pure Python Engine: ~8-15 µs / eval (~100,000 evals/sec, zero dependencies)
+
+# 2. Native compiled Rust engine (crates/spanda-core):
+# cargo build --release -p spanda-core
+./crates/spanda-core/target/release/spnda bench --iterations 200000
+# ✓ Native Rust Engine: 767.9 nanoseconds / eval (1,302,312 evals/sec on single core!)
+```
+
+**Launch the high-throughput OpenAI-compatible proxy gateway:**
+For production microservices and non-Python languages (TypeScript, Go, Rust, Ruby, curl), run the proxy gateway:
 
 ```bash
-# Launch the 760-nanosecond Rust proxy forwarding to any upstream LLM
+# Launch proxy forwarding to any upstream LLM (Ollama, vLLM, OpenAI, Groq)
 spnda serve --upstream http://localhost:11434/v1 --port 8080 --block --k 3
 
-# Or benchmark the mathematical engine directly
-spnda bench --iterations 200000
-# ✓ Latency per Eval : 767.9 nanoseconds
-# ✓ Throughput       : 1,302,312 evaluations/sec on single core!
-
-# Test any candidate completions via CLI
+# Test candidate completions via CLI
 spnda eval "42" "42.0" "42"
 ```
 

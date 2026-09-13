@@ -21,7 +21,7 @@ Usage:
     >>> print(response.spanda.is_safe)    # True
 """
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 __author__ = "Bhupen Nayak"
 __email__ = "bhupennayak@icloud.com"
 

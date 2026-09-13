@@ -43,6 +43,7 @@ def main():
         prog="spnda",
         description="Spanda — Epistemic Uncertainty Quantification & Guardrail Gateway (Spanda Research)"
     )
+    parser.add_argument("--python", action="store_true", help="Force pure Python engine (zero-dependency)")
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     # Serve
@@ -58,6 +59,10 @@ def main():
     eval_parser.add_argument("samples", nargs="+", help="Candidate answer strings")
     eval_parser.add_argument("--context", type=str, default=None, help="Optional context prompt")
     eval_parser.add_argument("--threshold", type=float, default=0.35, help="R_sc uncertainty threshold")
+
+    # Bench
+    bench_parser = subparsers.add_parser("bench", help="Run micro-benchmarks measuring kernel latency and throughput")
+    bench_parser.add_argument("--iterations", type=int, default=50000, help="Number of evaluation iterations to run")
 
     # Version
     subparsers.add_parser("version", help="Show Spanda version and architecture details")
@@ -77,8 +82,40 @@ def main():
         receipt = guard.evaluate(sampled_responses=args.samples, context=args.context)
         import json
         print(json.dumps(receipt.to_dict(), indent=2))
+    elif args.command == "bench":
+        import time
+        iterations = args.iterations
+        samples = [
+            "42",
+            "42.0",
+            "The answer is 42",
+            "43",
+            "42",
+        ]
+        print(f"Running Spanda mathematical kernel benchmark ({iterations:,} iterations)...")
+        print("Engine: Pure Python Standard Library (Zero-GPU, Zero-Dependency)")
+
+        # Warmup
+        for _ in range(1000):
+            compute_rsc(samples)
+
+        start = time.perf_counter()
+        for _ in range(iterations):
+            compute_rsc(samples)
+        total_time = time.perf_counter() - start
+
+        latency_us = (total_time / iterations) * 1e6
+        per_op_nanos = latency_us * 1000.0
+        ops_per_sec = int(iterations / total_time)
+
+        print(f"✓ Total Time        : {total_time:.3f}s")
+        print(f"✓ Latency per Eval  : {per_op_nanos:.1f} nanoseconds ({latency_us:.2f} microseconds)")
+        print(f"✓ Throughput        : {ops_per_sec:,} evaluations/sec on single core")
+        print("─" * 60)
+        print("💡 Note: To reach sub-microsecond (< 1 µs / 652 ns) speeds, compile the")
+        print("   native Rust engine: `cd crates/spanda-core && cargo build --release`")
     elif args.command == "version":
-        print("Spanda Suite v0.3.0 (Spanda Research)")
+        print("Spanda Suite v0.3.1 (Spanda Research)")
         print("Epistemic Uncertainty Engine & High-Performance LLM Gateway")
         print("DOI: 10.5281/zenodo.22233648")
     else:

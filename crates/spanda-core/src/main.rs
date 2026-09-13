@@ -10,7 +10,7 @@ use spanda_core::gateway::{create_router, GatewayState};
 use spanda_core::math::SpandaEngine;
 
 #[derive(Parser)]
-#[command(name = "spnda", author = "Bhupen Nayak <bhupennayak@icloud.com>", version = "0.3.0", about = "Spanda — High-Performance Rust Epistemic Guardrail Gateway (Spanda Research)")]
+#[command(name = "spnda", author = "Bhupen Nayak <bhupennayak@icloud.com>", version = "0.3.1", about = "Spanda — High-Performance Rust Epistemic Guardrail Gateway (Spanda Research)")]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -147,7 +147,7 @@ async fn main() {
         }
 
         Commands::Version => {
-            println!("Spanda Enterprise Suite v0.3.0 (Spanda Research)");
+            println!("Spanda Enterprise Suite v0.3.1 (Spanda Research)");
             println!("Architecture: Sub-Microsecond Epistemic State & Uncertainty Kernel");
             println!("- Discrete Equivalence Class Partitioning (Exact-Match Normalized Entropy)");
             println!("- 7-State Epistemic Decision Engine (Divergence & Consensus Resolution)");
