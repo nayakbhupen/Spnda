@@ -3,6 +3,7 @@
 # ⚡ Spanda ($R_{sc}$)
 ### Zero-Cost Epistemic Uncertainty Quantification for Large Language Models
 [![PyPI](https://img.shields.io/pypi/v/spnda.svg?color=blue)](https://pypi.org/project/spnda/)
+[![PyPI Downloads](https://static.pepy.tech/personalized-badge/spnda?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/spnda)
 [![License: BSL 1.1 / MIT](https://img.shields.io/badge/License-BSL%201.1%20%2F%20MIT-blue.svg)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22233648.svg)](https://doi.org/10.5281/zenodo.22233648)
